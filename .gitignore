@@ -1,3 +1,5 @@
 .idea
 env
 db.sqlite3
+project/__pycache__/
+shop/__pycache__/
