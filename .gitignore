@@ -3,3 +3,4 @@ env
 db.sqlite3
 project/__pycache__/
 shop/__pycache__/
+__pycache__
