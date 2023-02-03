@@ -1,19 +1,27 @@
 from rest_framework.viewsets import ReadOnlyModelViewSet
+from rest_framework.response import Response
+from rest_framework.decorators import action
 
-from shop.models import Category
-from shop.serializers import CategorySerializer
+from shop.models import Category, Product, Article
+from shop.serializers import CategoryListSerializer,CategoryDetailSerializer,ProductSerializer,ArticleSerializer
 
-from shop.models import Product
-from shop.serializers import ProductSerializer
+class MultipleSerializerMixin:
+    detail_serializer_class = None
+    def get_serializer_class(self):
+        if self.action == 'retrieve' and self.detail_serializer_class is not None:
+            return self.detail_serializer_class
+        return super().get_serializer_class()
 
-from shop.models import Article
-from shop.serializers import ArticleSerializer
-class CategoryViewset(ReadOnlyModelViewSet):
-    serializer_class = CategorySerializer
+class CategoryViewset(MultipleSerializerMixin,ReadOnlyModelViewSet):
+    serializer_class = CategoryListSerializer
+    detail_serializer_class = CategoryDetailSerializer
 
     def get_queryset(self):
         return Category.objects.filter(active=True)
-
+    @action(detail=True, methods=['post'])
+    def disable(self, request, pk):
+        self.get_object().disable()
+        return Response()
 
 class ProductViewset(ReadOnlyModelViewSet):
     serializer_class = ProductSerializer
@@ -26,6 +34,11 @@ class ProductViewset(ReadOnlyModelViewSet):
         if category_id is not None:
             queryset = queryset.filter(category_id=category_id)
         return queryset
+
+    @action(detail=True, methods=['post'])
+    def disable(self, request, pk):
+        self.get_object().disable()
+        return Response()
 
 class ArticleViewset(ReadOnlyModelViewSet):
     serializer_class = ArticleSerializer
