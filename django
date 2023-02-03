@@ -1,0 +1,10 @@
+- créer un env virtuel python -m venv env
+- Activer l'env source env/bin/activate
+- installer django pip install django
+- ajouter les requirements pip freeze > requirements.txt
+- commencer un projet django-admin startproject nom_du_projet
+- exécuter serveur de devellopment python manage.py runserver
+- créer bdd python manage.py migrate
+- créer une application python manage.py startapp nom_appli
+
+
