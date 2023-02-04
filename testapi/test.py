@@ -51,6 +51,7 @@ class ShopAPITestCase(APITestCase):
                 'name': category.name,
                 'date_created': self.format_datetime(category.date_created),
                 'date_updated': self.format_datetime(category.date_updated),
+                'description': category.description,
                 # 'products': self.get_product_list_data(category.products.filter(active=True))
             } for category in categories
         ]
