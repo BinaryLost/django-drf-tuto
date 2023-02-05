@@ -3,7 +3,8 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 
 from shop.models import Category, Product, Article
-from shop.serializers import CategoryListSerializer,CategoryDetailSerializer,ProductSerializer,ArticleSerializer
+from shop.serializers import CategoryListSerializer,CategoryDetailSerializer,\
+    ProductListSerializer,ProductDetailSerializer,ArticleSerializer
 
 class MultipleSerializerMixin:
     detail_serializer_class = None
@@ -24,7 +25,8 @@ class CategoryViewset(MultipleSerializerMixin,ReadOnlyModelViewSet):
         return Response()
 
 class ProductViewset(ReadOnlyModelViewSet):
-    serializer_class = ProductSerializer
+    serializer_class = ProductListSerializer
+    detail_serializer_class = ProductDetailSerializer
 
     def get_queryset(self):
         # Nous récupérons tous les produits dans une variable nommée queryset
@@ -57,3 +59,9 @@ class AdminCategoryViewset(MultipleSerializerMixin, ModelViewSet):
 
     def get_queryset(self):
         return Category.objects.all()
+
+class AdminArticleViewset(MultipleSerializerMixin, ModelViewSet):
+    serializer_class = ArticleSerializer
+    def get_queryset(self):
+        return Article.objects.all()
+

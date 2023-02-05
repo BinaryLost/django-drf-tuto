@@ -2,16 +2,26 @@ from rest_framework import serializers
 from shop.models import Category,Product,Article
 
 
-class ProductSerializer(serializers.ModelSerializer):
+class ProductListSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Product
+        fields = ['id', 'date_created', 'date_updated', 'name', 'category', 'ecoscore']
+
+
+class ProductDetailSerializer(serializers.ModelSerializer):
+
     articles = serializers.SerializerMethodField()
 
     class Meta:
         model = Product
-        fields = ['id','date_created','date_updated','name','category','articles']
+        fields = ['id', 'date_created', 'date_updated', 'name', 'category', 'articles']
+
     def get_articles(self, instance):
         queryset = instance.articles.filter(active=True)
         serializer = ArticleSerializer(queryset, many=True)
         return serializer.data
+
 class CategoryListSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -43,7 +53,7 @@ class CategoryDetailSerializer(serializers.ModelSerializer):
 
     def get_products(self, instance):
         queryset = instance.products.filter(active=True)
-        serializer = ProductSerializer(queryset, many=True)
+        serializer = ProductListSerializer(queryset, many=True)
         return serializer.data
 
 
@@ -51,3 +61,13 @@ class ArticleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Article
         fields = ['id','date_created','name','price','product']
+    def validate_price(self, value):
+        if value <= 1 :
+            raise serializers.ValidationError('Price must be > 1')
+        return value
+
+    def validate_product(self, value):
+        if value.active is False:
+            raise serializers.ValidationError('Inactive product')
+        return value
+
